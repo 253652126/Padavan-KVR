@@ -1,0 +1,42 @@
+--- a/src/threadpool/threadpool.c
++++ b/src/threadpool/threadpool.c
+@@ -535,15 +535,17 @@
+ 	return (tpm->flags & TPM_F_COMPLETED);
+ }
+ 
++#ifdef SYS_pidfd_open
+ static int
+ pidfd_open(pid_t pid, unsigned int flags) {
+ 	return syscall(SYS_pidfd_open, pid, flags);
+ }
++#endif
+ 
+ static int
+ thread_wait_by_pidfd(thread_info_t *ti) {
+ #if defined(__linux__) && !defined(THREAD_NO_PIDFD)
+-	if (ti->tid <= 0) {
++	if (ti->tid <= 0 || !defined(SYS_pidfd_open)) {
+ 		return (-1);
+ 	}
+ 	ti->pidfd = pidfd_open(ti->tid, 0);
+@@ -551,10 +553,12 @@
+ 	if (ti->pidfd < 0) {
+ 		return (-1);
+ 	}
++#ifdef SYS_pidfd_open
+ 	return (0);
++#endif
+ }
+ 
+ static int
+@@ -560,8 +564,10 @@
+ thread_wait(thread_info_t *ti) {
+ #if defined(__linux__) && !defined(THREAD_NO_PIDFD)
++#ifdef SYS_pidfd_open
+ 	if (thread_wait_by_pidfd(ti) == 0) {
+ 		return (0);
+ 	}
++#endif
+ #endif
+ 	/* Fallback to pipe-based waiting */
+ 	return (thread_wait_by_pipe(ti));
