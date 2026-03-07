@@ -14,6 +14,7 @@ download_test:
 		patch -p1 -i ../msd_lite.diff ; \
 		cd src/liblcb ; \
 		patch -p1 -i ../../../liblcb_msd_lite.diff ; \
+		patch -p1 -i ../../../disable_pidfd.patch ; \
 		cd ../../; \
 	fi )
 
