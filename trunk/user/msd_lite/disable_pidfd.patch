@@ -1,36 +1,35 @@
-diff --git a/src/threadpool/threadpool.c b/src/threadpool/threadpool.c
-index xxxxxxx..yyyyyyy 100644
 --- a/src/threadpool/threadpool.c
 +++ b/src/threadpool/threadpool.c
-@@ -538,11 +538,13 @@ threadpool_msg_wait(threadpool_msg_t *msg) {
+@@ -538,11 +538,13 @@
  	return (tpm->flags & TPM_F_COMPLETED);
  }
  
-+#if defined(SYS_pidfd_open) && defined(__NR_pidfd_open)
++#if defined(SYS_pidfd_open)
  static int
  pidfd_open(pid_t pid, unsigned int flags) {
  	return syscall(SYS_pidfd_open, pid, flags);
  }
--
 +#endif
-+
+ 
  static int
  thread_wait_by_pidfd(thread_info_t *ti) {
- #if defined(__linux__) && !defined(THREAD_NO_PIDFD)
-@@ -551,7 +553,7 @@ thread_wait_by_pidfd(thread_info_t *ti) {
+@@ -551,7 +553,9 @@
  		return (-1);
  	}
  	ti->pidfd = pidfd_open(ti->tid, 0);
 -	if (ti->pidfd < 0) {
-+	if (ti->pidfd < 0 || ti->pidfd == -1) {
++	if (ti->pidfd < 0) {
++#if defined(SYS_pidfd_open)
  		return (-1);
++#endif
  	}
  	return (0);
-@@ -560,6 +562,7 @@ thread_wait_by_pidfd(thread_info_t *ti) {
+ }
+@@ -560,8 +564,10 @@
  
  static int
  thread_wait(thread_info_t *ti) {
-+#if defined(SYS_pidfd_open) && defined(__NR_pidfd_open)
++#if defined(SYS_pidfd_open)
  	if (thread_wait_by_pidfd(ti) == 0) {
  		return (0);
  	}
