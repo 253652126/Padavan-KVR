@@ -14,8 +14,8 @@ download_test:
 		patch -p1 -i ../msd_lite.diff ; \
 		cd src/liblcb ; \
 		patch -p1 -i ../../../liblcb_msd_lite.diff ; \
-		sed -i '/^static int pidfd_open(pid_t pid, unsigned int flags) {/,/^}/d' src/threadpool/threadpool.c ; \
-		sed -i 's/static int thread_wait_by_pidfd(thread_info_t \*ti) {[^}]*}/static int thread_wait_by_pidfd(thread_info_t *ti) { return (-1); }/' src/threadpool/threadpool.c ; \
+		sed -i 's|^#if defined(__linux__) && !defined(THREAD_NO_PIDFD)|/* #if defined(__linux__) && !defined(THREAD_NO_PIDFD) */|' src/threadpool/threadpool.c ; \
+		sed -i 's|^#endif /\* __linux__ && !THREAD_NO_PIDFD \*/|/* #endif */|' src/threadpool/threadpool.c ; \
 		cd ../../; \
 	fi )
 
