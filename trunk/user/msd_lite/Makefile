@@ -8,13 +8,12 @@ all: download_test config_test
 
 download_test:
 	( if [ ! -d "$(THISDIR)/$(SRC_NAME)" ]; then \
-		git clone https:// https://github.com/rozhuk-im/msd_lite.git ; \
+		git clone https://github.com/rozhuk-im/msd_lite.git ; \
 		cd "$(SRC_NAME)" ; \
 		git submodule update --init --recursive ; \
 		patch -p1 -i ../msd_lite.diff ; \
 		cd src/liblcb ; \
 		patch -p1 -i ../../../liblcb_msd_lite.diff ; \
-		# Force disable pidfd_open by making thread_wait_by_pidfd always fail \
 		sed -i 's/^static int thread_wait_by_pidfd.*/static int thread_wait_by_pidfd(thread_info_t *ti) { return (-1); }/' src/threadpool/threadpool.c ; \
 		cd ../../; \
 	fi )
