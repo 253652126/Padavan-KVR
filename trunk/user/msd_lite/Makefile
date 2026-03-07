@@ -14,8 +14,7 @@ download_test:
 		patch -p1 -i ../msd_lite.diff ; \
 		cd src/liblcb ; \
 		patch -p1 -i ../../../liblcb_msd_lite.diff ; \
-		sed -i 's|^#if defined(__linux__) && !defined(THREAD_NO_PIDFD)|/* #if defined(__linux__) && !defined(THREAD_NO_PIDFD) */|' src/threadpool/threadpool.c ; \
-		sed -i 's|^#endif /\* __linux__ && !THREAD_NO_PIDFD \*/|/* #endif */|' src/threadpool/threadpool.c ; \
+		sed -i 's|return syscall(SYS_pidfd_open, pid, flags);|return -1; // disabled for old kernel|' src/threadpool/threadpool.c ; \
 		cd ../../; \
 	fi )
 
