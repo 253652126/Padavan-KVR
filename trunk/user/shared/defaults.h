@@ -31,8 +31,8 @@
 #define SYS_GROUP_NOGROUP	"nogroup"
 
 #define DEF_LAN_ADDR		"10.10.1.1"
-#define DEF_LAN_DHCP_BEG	"10.10.1.6"
-#define DEF_LAN_DHCP_END	"10.10.1.188"
+#define DEF_LAN_DHCP_BEG	"10.10.1.3"
+#define DEF_LAN_DHCP_END	"10.10.1.99"
 #define DEF_LAN_MASK		"255.255.255.0"
 
 #define DEF_WLAN_2G_CC		"CN"
